@@ -1,88 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Auto OTP Sender to Telegram</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8" />
+<title>Multi Bot Auto OTP Sender</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <style>
-    body{
-        background:#020617;
-        color:#e5e7eb;
-        font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-        padding:16px;
-    }
-    .box{
-        max-width:460px;
-        margin:0 auto;
-        background:#0f172a;
-        border-radius:16px;
-        border:1px solid #1f2937;
-        padding:18px 16px 20px;
-        box-shadow:0 18px 40px rgba(0,0,0,.7);
-    }
-    h1{
-        font-size:1.3rem;
-        text-align:center;
-        margin-bottom:14px;
-    }
-    label{
-        font-size:.8rem;
-        color:#9ca3af;
-        display:block;
-        margin-bottom:4px;
-    }
-    input{
-        width:100%;
-        padding:9px 10px;
-        border-radius:8px;
-        border:1px solid #374151;
-        background:#020617;
-        color:#e5e7eb;
-        margin-bottom:10px;
-        font-size:.85rem;
-    }
-    input::placeholder{color:#4b5563;}
-    .btn{
-        width:100%;
-        padding:11px;
-        border-radius:9px;
-        border:none;
-        font-weight:600;
-        cursor:pointer;
-        font-size:.9rem;
-        margin-bottom:8px;
-    }
-    .btn-start{background:#10b981;color:white;}
-    .btn-stop{background:#ef4444;color:white;}
-    .btn-start:active{transform:scale(.98);}
-    .btn-stop:active{transform:scale(.98);}
-    #status{
-        font-size:.8rem;
-        text-align:center;
-        margin-top:4px;
-        min-height:18px;
-    }
-    .note{
-        font-size:.7rem;
-        color:#9ca3af;
-        margin-top:6px;
-        text-align:center;
-        line-height:1.3;
-    }
+  body {
+    background: #020617;
+    color: #e5e7eb;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    padding: 16px;
+  }
+  .wrapper {
+    max-width: 520px;
+    margin: 0 auto;
+  }
+  .card {
+    background: #020617;
+    border-radius: 18px;
+    border: 1px solid #1f2937;
+    padding: 18px 16px 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  }
+  h1 {
+    font-size: 1.25rem;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .sub {
+    font-size: 0.8rem;
+    text-align: center;
+    color: #9ca3af;
+    margin-bottom: 10px;
+  }
+  .bot-box {
+    border-radius: 12px;
+    border: 1px solid #111827;
+    background: #020617;
+    padding: 10px;
+    margin-bottom: 8px;
+  }
+  .bot-title {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    color: #9ca3af;
+    margin-bottom: 4px;
+  }
+  label {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    display: block;
+    margin-bottom: 2px;
+  }
+  input {
+    width: 100%;
+    padding: 7px 8px;
+    border-radius: 8px;
+    border: 1px solid #374151;
+    background: #020617;
+    color: #e5e7eb;
+    font-size: 0.8rem;
+    margin-bottom: 6px;
+  }
+  input::placeholder { color: #4b5563; }
+
+  .btn {
+    width: 100%;
+    padding: 11px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+  }
+  .btn-start { background: #22c55e; color: white; }
+  .btn-stop  { background: #ef4444; color: white; }
+  .btn:active { transform: scale(0.98); }
+  #status {
+    font-size: 0.78rem;
+    text-align: center;
+    min-height: 18px;
+    margin-top: 4px;
+  }
+  .note {
+    font-size: 0.72rem;
+    color: #9ca3af;
+    margin-top: 6px;
+    text-align: center;
+    line-height: 1.3;
+  }
 </style>
 </head>
 <body>
+<div class="wrapper">
+  <div class="card">
+    <h1>Multi Bot Auto OTP Sender</h1>
+    <div class="sub">
+      Random fake numbers + OTPs<br />
+      <b>Multiple Telegram bots</b> par bheje jate hain (demo only).
+    </div>
 
-<div class="box">
-    <h1>Auto OTP Sender to Telegram</h1>
+    <!-- BOT 1 -->
+    <div class="bot-box">
+      <div class="bot-title">Bot 1 (Required at least 1 bot)</div>
+      <label for="token1">Bot 1 Token</label>
+      <input id="token1" placeholder="Paste bot 1 token" />
+      <label for="chat1">Bot 1 Chat ID</label>
+      <input id="chat1" placeholder="Example: -1003431058245" />
+    </div>
 
-    <!-- yahan token & chat id HAR BAAR fill karna hai (GitHub par hard-code mat karo) -->
-    <label for="token">Bot Token</label>
-    <input id="token" type="text" placeholder="8486836501:AAGI-Au_AI_IV7u_sSbXpr5jJieuICMxAXI">
+    <!-- BOT 2 -->
+    <div class="bot-box">
+      <div class="bot-title">Bot 2 (optional)</div>
+      <label for="token2">Bot 2 Token</label>
+      <input id="token2" placeholder="Paste bot 2 token" />
+      <label for="chat2">Bot 2 Chat ID</label>
+      <input id="chat2" placeholder="Group / Channel Chat ID" />
+    </div>
 
-    <label for="chatid">Group Chat ID</label>
-    <input id="chatid" type="text" placeholder="Example: -1003431058245">
+    <!-- BOT 3 -->
+    <div class="bot-box">
+      <div class="bot-title">Bot 3 (optional)</div>
+      <label for="token3">Bot 3 Token</label>
+      <input id="token3" placeholder="Paste bot 3 token" />
+      <label for="chat3">Bot 3 Chat ID</label>
+      <input id="chat3" placeholder="Group / Channel Chat ID" />
+    </div>
 
     <button class="btn btn-start" onclick="startAuto()">START AUTO OTP</button>
     <button class="btn btn-stop" onclick="stopAuto()">STOP</button>
@@ -90,107 +135,167 @@
     <div id="status"></div>
 
     <div class="note">
-        Fake random numbers + OTPs Telegram group me bheje jate hain.<br>
-        Real services se koi connection nahi hai (demo / simulation only).
+      Messages sirf tab tak jate hain jab tak yeh page open hai aur
+      Auto Sender running hai. Page band = script stop (normal behaviour).
+      Data fake hai, kisi real OTP / account se link nahi hota.
     </div>
+  </div>
 </div>
 
 <script>
 let intervalId = null;
 
-/* ---------- Fake data setup ---------- */
 const countries = [
-    {code:"+1",   flag:"🇺🇸"},
-    {code:"+44",  flag:"🇬🇧"},
-    {code:"+92",  flag:"🇵🇰"},
-    {code:"+91",  flag:"🇮🇳"},
-    {code:"+81",  flag:"🇯🇵"},
-    {code:"+49",  flag:"🇩🇪"},
-    {code:"+971", flag:"🇦🇪"},
-    {code:"+34",  flag:"🇪🇸"}
+  { name: "United States",  code: "+1",    flag: "🇺🇸" },
+  { name: "United Kingdom", code: "+44",   flag: "🇬🇧" },
+  { name: "Pakistan",       code: "+92",   flag: "🇵🇰" },
+  { name: "India",          code: "+91",   flag: "🇮🇳" },
+  { name: "Nigeria",        code: "+234",  flag: "🇳🇬" },
+  { name: "Spain",          code: "+34",   flag: "🇪🇸" },
+  { name: "Germany",        code: "+49",   flag: "🇩🇪" },
+  { name: "UAE",            code: "+971",  flag: "🇦🇪" }
 ];
 
 const services = [
-    {name:"Facebook",  short:"FB"},
-    {name:"WhatsApp",  short:"WA"},
-    {name:"Gmail",     short:"GM"},
-    {name:"TikTok",    short:"TT"},
-    {name:"Instagram", short:"IG"}
+  { key: "whatsapp", name: "Whatsapp" },
+  { key: "facebook", name: "Facebook" },
+  { key: "gmail",    name: "Gmail" },
+  { key: "tiktok",   name: "TikTok" },
+  { key: "instagram",name: "Instagram" }
 ];
 
 const rand = (min,max)=>Math.floor(Math.random()*(max-min+1))+min;
-const pick = arr => arr[rand(0,arr.length-1)];
-const genOtp = ()=>rand(100000,999999);
-const genPhone = c => `${c.code} ${rand(100,999)}-${rand(100,999)}-${rand(1000,9999)}`;
+const pick = arr => arr[rand(0, arr.length-1)];
 
-/* ---------- Send to Telegram ---------- */
-function sendToTelegram(token, chatId, text){
-    const url = `https://api.telegram.org/bot${token}/sendMessage`;
-    const body = {
-        chat_id: chatId,
-        text: text,
-        parse_mode: "Markdown"
-    };
-
-    return fetch(url, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(body)
-    });
+function genOtp(){
+  const n = rand(100000,999999);
+  // sometimes format 3-3 style: 660-427
+  const s = String(n);
+  return Math.random() < 0.5 ? s : `${s.slice(0,3)}-${s.slice(3)}`;
+}
+function genPhone(country){
+  const last = rand(1000,9999);
+  const mid  = rand(100,999);
+  const visible = `${country.code} ${mid}-${last}`;
+  const hidden  = `${country.code} ${String(rand(200,999)).slice(0,3)}••••${String(last).slice(-4)}`;
+  return { visible, hidden };
 }
 
-/* ---------- Auto loop ---------- */
+/* ------------ TELEGRAM SENDER ------------ */
+function sendToTelegram(bot, text){
+  const url = `https://api.telegram.org/bot${bot.token}/sendMessage`;
+  const body = {
+    chat_id: bot.chatId,
+    text: text,
+    parse_mode: "Markdown"
+  };
+  return fetch(url, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify(body)
+  });
+}
+
+/* ------------ START / STOP ------------ */
 function startAuto(){
-    const token = document.getElementById("token").value.trim();
-    const chatId = document.getElementById("chatid").value.trim();
-    const status = document.getElementById("status");
+  const status = document.getElementById("status");
 
-    if(!token || !chatId){
-        status.innerHTML = "<span style='color:#f97373;'>Token & Chat ID required.</span>";
-        return;
+  // Collect bots
+  const bots = [];
+  const t1 = document.getElementById("token1").value.trim();
+  const c1 = document.getElementById("chat1").value.trim();
+  const t2 = document.getElementById("token2").value.trim();
+  const c2 = document.getElementById("chat2").value.trim();
+  const t3 = document.getElementById("token3").value.trim();
+  const c3 = document.getElementById("chat3").value.trim();
+
+  if (t1 && c1) bots.push({ token: t1, chatId: c1, label: "Bot1" });
+  if (t2 && c2) bots.push({ token: t2, chatId: c2, label: "Bot2" });
+  if (t3 && c3) bots.push({ token: t3, chatId: c3, label: "Bot3" });
+
+  if (bots.length === 0) {
+    status.innerHTML = "<span style='color:#f97373;'>Kam az kam 1 bot ka token & chat id fill karo.</span>";
+    return;
+  }
+
+  if (intervalId !== null) {
+    status.innerHTML = "<span style='color:#22c55e;'>Already running…</span>";
+    return;
+  }
+
+  status.innerHTML = "<span style='color:#22c55e;'>Auto OTP Started (multi-bot)…</span>";
+
+  // default: 5 second per message (safe-ish)
+  const delayMs = 5000;
+
+  intervalId = setInterval(()=>{
+    const bot = pick(bots);
+    const country = pick(countries);
+    const service = pick(services);
+    const otp = genOtp();
+    const phone = genPhone(country);
+
+    let fullMsg = "";
+    switch(service.key){
+      case "whatsapp":
+        fullMsg =
+`Your WhatsApp account is being registered on a new device.
+
+Do not share this code with anyone.
+Your WhatsApp code ${otp}`;
+        break;
+      case "facebook":
+        fullMsg =
+`Facebook verification code: ${otp}.
+
+This code will expire shortly. Do not share it with anyone.`;
+        break;
+      case "gmail":
+        fullMsg =
+`Gmail verification code: ${otp}.
+
+Use this code to complete sign in and secure your Google Account.`;
+        break;
+      case "tiktok":
+        fullMsg =
+`Your TikTok verification code is ${otp}.
+
+Enter this code in the app to continue. Do not share this code.`;
+        break;
+      case "instagram":
+        fullMsg =
+`Instagram security code: ${otp}.
+
+We noticed a login attempt. If this wasn't you, please ignore this message.`;
+        break;
     }
 
-    // Agar already chal raha hai to dobara start na karo
-    if(intervalId !== null){
-        status.innerHTML = "<span style='color:#22c55e;'>Already running…</span>";
-        return;
-    }
-
-    status.innerHTML = "<span style='color:#22c55e;'>Auto OTP Started…</span>";
-
-    intervalId = setInterval(()=>{
-        const country = pick(countries);
-        const service = pick(services);
-        const phone   = genPhone(country);
-        const otp     = genOtp();
-
-        const text =
-`📱 *REAL-TIME OTP FEED*
-━━━━━━━━━━━━━━━━━━
-🌍 Country: ${country.flag} ${phone}
+    const text =
+`📱 REAL-TIME OTP FEED
+────────────────────────
+🌍 Country: ${country.name} ${country.flag}
+📞 Number: ${phone.hidden}
 🔧 Service: ${service.name}
-🔐 OTP: *${otp}*
-💬 Message:
-${service.name} verification code: ${otp}. Do not share this code.
-━━━━━━━━━━━━━━━━━━
-Fake Data • Simulation`;
+🔐 OTP: ${otp}
+💬 Full Message:
+${fullMsg}
+────────────────────────
+Fake Data · Simulation`;
 
-        sendToTelegram(token, chatId, text)
-            .catch(()=>{ /* ignore errors in loop UI side */ });
-    }, 2000); // 2 second per fake OTP
+    sendToTelegram(bot, text).catch(()=>{ /* ignore errors in loop */ });
+  }, delayMs);
 }
 
 function stopAuto(){
-    const status = document.getElementById("status");
-    if(intervalId !== null){
-        clearInterval(intervalId);
-        intervalId = null;
-        status.innerHTML = "<span style='color:#facc15;'>Auto OTP Stopped.</span>";
-    } else {
-        status.innerHTML = "<span style='color:#9ca3af;'>Already stopped.</span>";
-    }
+  const status = document.getElementById("status");
+  if (intervalId !== null) {
+    clearInterval(intervalId);
+    intervalId = null;
+    status.innerHTML = "<span style='color:#facc15;'>Auto OTP Stopped.</span>";
+  } else {
+    status.innerHTML = "<span style='color:#9ca3af;'>Already stopped.</span>";
+  }
 }
 </script>
-
 </body>
 </html>
