@@ -77,6 +77,7 @@
   }
   .btn-start { background: #22c55e; color: white; }
   .btn-stop  { background: #ef4444; color: white; }
+  .btn-add { background: #3b82f6; color: white; font-size: 0.85rem; padding: 8px; }
   .btn:active { transform: scale(0.98); }
   #status {
     font-size: 0.78rem;
@@ -91,6 +92,10 @@
     text-align: center;
     line-height: 1.3;
   }
+  .bot-container {
+    max-height: 400px;
+    overflow-y: auto;
+  }
 </style>
 </head>
 <body>
@@ -102,32 +107,11 @@
       <b>Multiple Telegram bots</b> par bheje jate hain (demo only).
     </div>
 
-    <!-- BOT 1 -->
-    <div class="bot-box">
-      <div class="bot-title">Bot 1 (Required at least 1 bot)</div>
-      <label for="token1">Bot 1 Token</label>
-      <input id="token1" placeholder="Paste bot 1 token" />
-      <label for="chat1">Bot 1 Chat ID</label>
-      <input id="chat1" placeholder="Example: -1003431058245" />
+    <div class="bot-container" id="botContainer">
+      <!-- Bots will be dynamically added here -->
     </div>
 
-    <!-- BOT 2 -->
-    <div class="bot-box">
-      <div class="bot-title">Bot 2 (optional)</div>
-      <label for="token2">Bot 2 Token</label>
-      <input id="token2" placeholder="Paste bot 2 token" />
-      <label for="chat2">Bot 2 Chat ID</label>
-      <input id="chat2" placeholder="Group / Channel Chat ID" />
-    </div>
-
-    <!-- BOT 3 -->
-    <div class="bot-box">
-      <div class="bot-title">Bot 3 (optional)</div>
-      <label for="token3">Bot 3 Token</label>
-      <input id="token3" placeholder="Paste bot 3 token" />
-      <label for="chat3">Bot 3 Chat ID</label>
-      <input id="chat3" placeholder="Group / Channel Chat ID" />
-    </div>
+    <button class="btn btn-add" onclick="addBot()">+ Add Another Bot</button>
 
     <button class="btn btn-start" onclick="startAuto()">START AUTO OTP</button>
     <button class="btn btn-stop" onclick="stopAuto()">STOP</button>
@@ -144,6 +128,8 @@
 
 <script>
 let intervalId = null;
+let botCounter = 1;
+let bots = []; // Global bots array for sequential sending
 
 const countries = [
   { name: "United States",  code: "+1",    flag: "🇺🇸" },
@@ -196,24 +182,89 @@ function sendToTelegram(bot, text){
   });
 }
 
+/* ------------ LOCAL STORAGE FUNCTIONS ------------ */
+function saveBots() {
+  localStorage.setItem('multiBotBots', JSON.stringify(bots));
+}
+
+function loadBots() {
+  const saved = localStorage.getItem('multiBotBots');
+  if (saved) {
+    bots = JSON.parse(saved);
+    botCounter = bots.length + 1;
+    renderBots();
+  } else {
+    // Default first bot
+    addBot(true);
+  }
+}
+
+function clearBots() {
+  bots = [];
+  botCounter = 1;
+  localStorage.removeItem('multiBotBots');
+  renderBots();
+}
+
+/* ------------ DYNAMIC BOT MANAGEMENT ------------ */
+function addBot(isDefault = false) {
+  const newBot = {
+    id: botCounter,
+    token: isDefault ? '' : '',
+    chatId: isDefault ? '' : '',
+    label: `Bot ${botCounter}`
+  };
+  bots.push(newBot);
+  botCounter++;
+  saveBots();
+  renderBots();
+}
+
+function removeBot(botId) {
+  bots = bots.filter(bot => bot.id !== botId);
+  saveBots();
+  renderBots();
+}
+
+function updateBot(botId, token, chatId) {
+  const bot = bots.find(b => b.id === botId);
+  if (bot) {
+    bot.token = token.trim();
+    bot.chatId = chatId.trim();
+    saveBots();
+  }
+}
+
+function renderBots() {
+  const container = document.getElementById('botContainer');
+  container.innerHTML = '';
+
+  bots.forEach((bot, index) => {
+    const botBox = document.createElement('div');
+    botBox.className = 'bot-box';
+    botBox.innerHTML = `
+      <div class="bot-title">${bot.label} ${bots.length > 1 ? `<button onclick="removeBot(${bot.id})" style="float:right; background:#ef4444; color:white; border:none; border-radius:4px; padding:2px 6px; font-size:0.7rem; cursor:pointer;">Remove</button>` : ''}</div>
+      <label for="token${bot.id}">Bot Token</label>
+      <input id="token${bot.id}" placeholder="Paste bot token" value="${bot.token}" onchange="updateBot(${bot.id}, this.value, document.getElementById('chat${bot.id}').value)" />
+      <label for="chat${bot.id}">Bot Chat ID</label>
+      <input id="chat${bot.id}" placeholder="Example: -1003431058245" value="${bot.chatId}" onchange="updateBot(${bot.id}, document.getElementById('token${bot.id}').value, this.value)" />
+    `;
+    container.appendChild(botBox);
+  });
+
+  if (bots.length === 0) {
+    addBot(true);
+  }
+}
+
 /* ------------ START / STOP ------------ */
 function startAuto(){
   const status = document.getElementById("status");
 
-  // Collect bots
-  const bots = [];
-  const t1 = document.getElementById("token1").value.trim();
-  const c1 = document.getElementById("chat1").value.trim();
-  const t2 = document.getElementById("token2").value.trim();
-  const c2 = document.getElementById("chat2").value.trim();
-  const t3 = document.getElementById("token3").value.trim();
-  const c3 = document.getElementById("chat3").value.trim();
+  // Filter valid bots
+  const validBots = bots.filter(bot => bot.token && bot.chatId).map(bot => ({ ...bot }));
 
-  if (t1 && c1) bots.push({ token: t1, chatId: c1, label: "Bot1" });
-  if (t2 && c2) bots.push({ token: t2, chatId: c2, label: "Bot2" });
-  if (t3 && c3) bots.push({ token: t3, chatId: c3, label: "Bot3" });
-
-  if (bots.length === 0) {
+  if (validBots.length === 0) {
     status.innerHTML = "<span style='color:#f97373;'>Kam az kam 1 bot ka token & chat id fill karo.</span>";
     return;
   }
@@ -223,13 +274,16 @@ function startAuto(){
     return;
   }
 
-  status.innerHTML = "<span style='color:#22c55e;'>Auto OTP Started (multi-bot)…</span>";
+  status.innerHTML = "<span style='color:#22c55e;'>Auto OTP Started (sequential multi-bot)…</span>";
 
-  // default: 5 second per message (safe-ish)
-  const delayMs = 5000;
+  // Sequential index
+  let currentBotIndex = 0;
+
+  // 10 seconds delay
+  const delayMs = 10000;
 
   intervalId = setInterval(()=>{
-    const bot = pick(bots);
+    const bot = validBots[currentBotIndex];
     const country = pick(countries);
     const service = pick(services);
     const otp = genOtp();
@@ -283,6 +337,9 @@ ${fullMsg}
 Fake Data · Simulation`;
 
     sendToTelegram(bot, text).catch(()=>{ /* ignore errors in loop */ });
+
+    // Move to next bot (cycle back if at end)
+    currentBotIndex = (currentBotIndex + 1) % validBots.length;
   }, delayMs);
 }
 
@@ -296,6 +353,9 @@ function stopAuto(){
     status.innerHTML = "<span style='color:#9ca3af;'>Already stopped.</span>";
   }
 }
+
+// Load bots on page load
+loadBots();
 </script>
 </body>
 </html>
