@@ -3,151 +3,96 @@
 <head>
 <meta charset="UTF-8" />
 <title>Multi Bot Auto OTP Sender</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-  body {
-    background: #020617;
-    color: #e5e7eb;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    padding: 16px;
-  }
-  .wrapper {
-    max-width: 520px;
-    margin: 0 auto;
-  }
-  .card {
-    background: #020617;
-    border-radius: 18px;
-    border: 1px solid #1f2937;
-    padding: 18px 16px 20px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-  }
-  h1 {
-    font-size: 1.25rem;
-    text-align: center;
-    margin-bottom: 10px;
-  }
-  .sub {
-    font-size: 0.8rem;
-    text-align: center;
-    color: #9ca3af;
-    margin-bottom: 10px;
-  }
-  .bot-box {
-    border-radius: 12px;
-    border: 1px solid #111827;
-    background: #020617;
-    padding: 10px;
-    margin-bottom: 8px;
-  }
-  .bot-title {
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    color: #9ca3af;
-    margin-bottom: 4px;
-  }
-  label {
-    font-size: 0.75rem;
-    color: #9ca3af;
-    display: block;
-    margin-bottom: 2px;
-  }
-  input {
-    width: 100%;
-    padding: 7px 8px;
-    border-radius: 8px;
-    border: 1px solid #374151;
-    background: #020617;
-    color: #e5e7eb;
-    font-size: 0.8rem;
-    margin-bottom: 6px;
-  }
-  input::placeholder { color: #4b5563; }
+body {
+  background:#0f172a;
+  font-family: system-ui;
+  padding:20px;
+  color:white;
+}
+.wrapper { max-width:520px; margin:auto; }
+.card {
+  background:#0f172a;
+  border:1px solid #243046;
+  padding:20px;
+  border-radius:18px;
+}
+h1 {
+  text-align:center;
+  font-size:1.3rem;
+  margin-bottom:8px;
+}
+.sub { text-align:center; font-size:0.8rem; color:#9ca3af; margin-bottom:10px; }
 
-  .btn {
-    width: 100%;
-    padding: 11px;
-    border-radius: 10px;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 0.9rem;
-    margin-bottom: 6px;
-  }
-  .btn-start { background: #22c55e; color: white; }
-  .btn-stop  { background: #ef4444; color: white; }
-  .btn-add { background: #3b82f6; color: white; font-size: 0.85rem; padding: 8px; }
-  .btn:active { transform: scale(0.98); }
-  #status {
-    font-size: 0.78rem;
-    text-align: center;
-    min-height: 18px;
-    margin-top: 4px;
-  }
-  .note {
-    font-size: 0.72rem;
-    color: #9ca3af;
-    margin-top: 6px;
-    text-align: center;
-    line-height: 1.3;
-  }
-  .bot-container {
-    max-height: 400px;
-    overflow-y: auto;
-  }
+.bot-box {
+  background:#111827;
+  padding:10px;
+  border-radius:12px;
+  border:1px solid #1f2937;
+  margin-bottom:10px;
+}
+label { font-size:0.75rem; color:#9ca3af; margin-bottom:3px; display:block; }
+input {
+  width:100%;
+  padding:7px;
+  border-radius:8px;
+  border:1px solid #374151;
+  background:#020617;
+  color:white;
+  margin-bottom:7px;
+}
+.btn {
+  width:100%; padding:10px; border:none;
+  border-radius:10px; font-weight:600;
+  cursor:pointer; margin-bottom:8px;
+}
+.btn-add { background:#3b82f6; color:white; }
+.btn-start { background:#22c55e; color:white; }
+.btn-stop { background:#ef4444; color:white; }
+#status { text-align:center; font-size:0.8rem; min-height:18px; }
+.bot-container { max-height:350px; overflow-y:auto; }
+
 </style>
 </head>
 <body>
+
 <div class="wrapper">
   <div class="card">
     <h1>Multi Bot Auto OTP Sender</h1>
-    <div class="sub">
-      Random fake numbers + OTPs<br />
-      <b>Multiple Telegram bots</b> par bheje jate hain (demo only).
-    </div>
+    <div class="sub">Telegram-Style OTP Feed (Exact Screenshot Format)</div>
 
-    <div class="bot-container" id="botContainer">
-      <!-- Bots will be dynamically added here -->
-    </div>
+    <div id="botContainer" class="bot-container"></div>
 
-    <button class="btn btn-add" onclick="addBot()">+ Add Another Bot</button>
-
-    <button class="btn btn-start" onclick="startAuto()">START AUTO OTP</button>
+    <button class="btn btn-add" onclick="addBot()">+ Add Bot</button>
+    <button class="btn btn-start" onclick="startAuto()">START AUTO</button>
     <button class="btn btn-stop" onclick="stopAuto()">STOP</button>
 
     <div id="status"></div>
 
-    <div class="note">
-      Messages sirf tab tak jate hain jab tak yeh page open hai aur
-      Auto Sender running hai. Page band = script stop (normal behaviour).
-      Data fake hai, kisi real OTP / account se link nahi hota.
-    </div>
   </div>
 </div>
 
 <script>
 let intervalId = null;
 let botCounter = 1;
-let bots = []; // Global bots array for sequential sending
+let bots = [];
 
 const countries = [
-  { name: "United States",  code: "+1",    flag: "🇺🇸" },
-  { name: "United Kingdom", code: "+44",   flag: "🇬🇧" },
-  { name: "Pakistan",       code: "+92",   flag: "🇵🇰" },
-  { name: "India",          code: "+91",   flag: "🇮🇳" },
-  { name: "Nigeria",        code: "+234",  flag: "🇳🇬" },
-  { name: "Spain",          code: "+34",   flag: "🇪🇸" },
-  { name: "Germany",        code: "+49",   flag: "🇩🇪" },
-  { name: "UAE",            code: "+971",  flag: "🇦🇪" }
+  { name:"Nigeria", code:"+234", flag:"🇳🇬" },
+  { name:"Pakistan", code:"+92", flag:"🇵🇰" },
+  { name:"United States", code:"+1", flag:"🇺🇸" },
+  { name:"India", code:"+91", flag:"🇮🇳" },
+  { name:"UAE", code:"+971", flag:"🇦🇪" },
 ];
 
 const services = [
-  { key: "whatsapp", name: "Whatsapp" },
-  { key: "facebook", name: "Facebook" },
-  { key: "gmail",    name: "Gmail" },
-  { key: "tiktok",   name: "TikTok" },
-  { key: "instagram",name: "Instagram" }
+  { key:"whatsapp", name:"Whatsapp" },
+  { key:"facebook", name:"Facebook" },
+  { key:"gmail", name:"Gmail" },
+  { key:"instagram", name:"Instagram" },
+  { key:"tiktok", name:"TikTok" }
 ];
 
 const rand = (min,max)=>Math.floor(Math.random()*(max-min+1))+min;
@@ -155,207 +100,133 @@ const pick = arr => arr[rand(0, arr.length-1)];
 
 function genOtp(){
   const n = rand(100000,999999);
-  // sometimes format 3-3 style: 660-427
   const s = String(n);
-  return Math.random() < 0.5 ? s : `${s.slice(0,3)}-${s.slice(3)}`;
+  return `${s.slice(0,3)}-${s.slice(3)}`;
 }
+
 function genPhone(country){
   const last = rand(1000,9999);
-  const mid  = rand(100,999);
-  const visible = `${country.code} ${mid}-${last}`;
-  const hidden  = `${country.code} ${String(rand(200,999)).slice(0,3)}••••${String(last).slice(-4)}`;
-  return { visible, hidden };
+  return `${country.code}${rand(100,999)}••••${last}`;
 }
 
-/* ------------ TELEGRAM SENDER ------------ */
 function sendToTelegram(bot, text){
-  const url = `https://api.telegram.org/bot${bot.token}/sendMessage`;
-  const body = {
-    chat_id: bot.chatId,
-    text: text,
-    parse_mode: "Markdown"
-  };
-  return fetch(url, {
+  return fetch(`https://api.telegram.org/bot${bot.token}/sendMessage`,{
     method:"POST",
     headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify(body)
+    body:JSON.stringify({ chat_id:bot.chatId, text:text, parse_mode:"Markdown" })
   });
 }
 
-/* ------------ LOCAL STORAGE FUNCTIONS ------------ */
-function saveBots() {
-  localStorage.setItem('multiBotBots', JSON.stringify(bots));
+function saveBots(){ localStorage.setItem("bots",JSON.stringify(bots)); }
+function loadBots(){
+  const s = localStorage.getItem("bots");
+  if(s){ bots = JSON.parse(s); botCounter=bots.length+1; renderBots(); }
+  else addBot();
 }
 
-function loadBots() {
-  const saved = localStorage.getItem('multiBotBots');
-  if (saved) {
-    bots = JSON.parse(saved);
-    botCounter = bots.length + 1;
-    renderBots();
-  } else {
-    // Default first bot
-    addBot(true);
-  }
-}
-
-function clearBots() {
-  bots = [];
-  botCounter = 1;
-  localStorage.removeItem('multiBotBots');
-  renderBots();
-}
-
-/* ------------ DYNAMIC BOT MANAGEMENT ------------ */
-function addBot(isDefault = false) {
-  const newBot = {
-    id: botCounter,
-    token: isDefault ? '' : '',
-    chatId: isDefault ? '' : '',
-    label: `Bot ${botCounter}`
-  };
-  bots.push(newBot);
+function addBot(){
+  bots.push({ id:botCounter, token:"", chatId:"", label:`Bot ${botCounter}` });
   botCounter++;
-  saveBots();
-  renderBots();
+  saveBots(); renderBots();
 }
 
-function removeBot(botId) {
-  bots = bots.filter(bot => bot.id !== botId);
-  saveBots();
-  renderBots();
+function removeBot(id){
+  bots = bots.filter(b=>b.id!==id);
+  saveBots(); renderBots();
 }
 
-function updateBot(botId, token, chatId) {
-  const bot = bots.find(b => b.id === botId);
-  if (bot) {
-    bot.token = token.trim();
-    bot.chatId = chatId.trim();
-    saveBots();
-  }
+function updateBot(id,token,chat){
+  const b = bots.find(x=>x.id===id);
+  if(b){ b.token=token; b.chatId=chat; saveBots(); }
 }
 
-function renderBots() {
-  const container = document.getElementById('botContainer');
-  container.innerHTML = '';
-
-  bots.forEach((bot, index) => {
-    const botBox = document.createElement('div');
-    botBox.className = 'bot-box';
-    botBox.innerHTML = `
-      <div class="bot-title">${bot.label} ${bots.length > 1 ? `<button onclick="removeBot(${bot.id})" style="float:right; background:#ef4444; color:white; border:none; border-radius:4px; padding:2px 6px; font-size:0.7rem; cursor:pointer;">Remove</button>` : ''}</div>
-      <label for="token${bot.id}">Bot Token</label>
-      <input id="token${bot.id}" placeholder="Paste bot token" value="${bot.token}" onchange="updateBot(${bot.id}, this.value, document.getElementById('chat${bot.id}').value)" />
-      <label for="chat${bot.id}">Bot Chat ID</label>
-      <input id="chat${bot.id}" placeholder="Example: -1003431058245" value="${bot.chatId}" onchange="updateBot(${bot.id}, document.getElementById('token${bot.id}').value, this.value)" />
+function renderBots(){
+  const box=document.getElementById("botContainer");
+  box.innerHTML="";
+  bots.forEach(bot=>{
+    box.innerHTML+=`
+      <div class="bot-box">
+        <div style="font-size:0.78rem; margin-bottom:5px;">
+          ${bot.label}
+          ${bots.length>1?`<button onclick="removeBot(${bot.id})" style="float:right; background:#ef4444; color:white; border:none; padding:2px 6px; border-radius:6px;">X</button>`:""}
+        </div>
+        <label>Bot Token</label>
+        <input value="${bot.token}" onchange="updateBot(${bot.id},this.value,document.getElementById('c${bot.id}').value)">
+        <label>Chat ID</label>
+        <input id="c${bot.id}" value="${bot.chatId}" onchange="updateBot(${bot.id},document.querySelector('#botContainer input').value,this.value)">
+      </div>
     `;
-    container.appendChild(botBox);
   });
-
-  if (bots.length === 0) {
-    addBot(true);
-  }
 }
 
-/* ------------ START / STOP ------------ */
 function startAuto(){
-  const status = document.getElementById("status");
-
-  // Filter valid bots
-  const validBots = bots.filter(bot => bot.token && bot.chatId).map(bot => ({ ...bot }));
-
-  if (validBots.length === 0) {
-    status.innerHTML = "<span style='color:#f97373;'>Kam az kam 1 bot ka token & chat id fill karo.</span>";
+  if(intervalId){ 
+    document.getElementById("status").innerHTML="Already Running";
     return;
   }
 
-  if (intervalId !== null) {
-    status.innerHTML = "<span style='color:#22c55e;'>Already running…</span>";
+  const valid = bots.filter(b=>b.token && b.chatId);
+  if(valid.length===0){
+    document.getElementById("status").innerHTML="Fill at least one bot details.";
     return;
   }
 
-  status.innerHTML = "<span style='color:#22c55e;'>Auto OTP Started (sequential multi-bot)…</span>";
+  document.getElementById("status").innerHTML="Started.";
 
-  // Sequential index
-  let currentBotIndex = 0;
+  let index=0;
+  intervalId=setInterval(()=>{
 
-  // 10 seconds delay
-  const delayMs = 10000;
-
-  intervalId = setInterval(()=>{
-    const bot = validBots[currentBotIndex];
+    const bot = valid[index];
     const country = pick(countries);
     const service = pick(services);
     const otp = genOtp();
     const phone = genPhone(country);
 
-    let fullMsg = "";
-    switch(service.key){
-      case "whatsapp":
-        fullMsg =
-`Your WhatsApp account is being registered on a new device.
+    const fullMsg =
+`Your WhatsApp account is being registered on a new device
 
-Do not share this code with anyone.
-Your WhatsApp code ${otp}`;
-        break;
-      case "facebook":
-        fullMsg =
-`Facebook verification code: ${otp}.
+Do not share this code with anyone
+Your WhatsApp code
+${otp}
+${Math.random().toString(36).substring(2,10)}`;
 
-This code will expire shortly. Do not share it with anyone.`;
-        break;
-      case "gmail":
-        fullMsg =
-`Gmail verification code: ${otp}.
-
-Use this code to complete sign in and secure your Google Account.`;
-        break;
-      case "tiktok":
-        fullMsg =
-`Your TikTok verification code is ${otp}.
-
-Enter this code in the app to continue. Do not share this code.`;
-        break;
-      case "instagram":
-        fullMsg =
-`Instagram security code: ${otp}.
-
-We noticed a login attempt. If this wasn't you, please ignore this message.`;
-        break;
-    }
-
+    // EXACT SCREENSHOT TEMPLATE
     const text =
-`📱 REAL-TIME OTP FEED
-────────────────────────
-🌍 Country: ${country.name} ${country.flag}
-📞 Number: ${phone.hidden}
-🔧 Service: ${service.name}
-🔐 OTP: ${otp}
-💬 Full Message:
+`⏰ *Time:* ${new Date().toLocaleString()}
+────────────────────
+
+🌍 *Country:* ${country.name}${country.flag}
+────────────────────
+
+⚙️ *Service:* ${service.name}
+────────────────────
+
+📱 *Number:* ${phone}
+────────────────────
+
+🔐 *OTP:* ${otp}
+────────────────────
+
+📄 *Full Message:*
+\`\`\`
 ${fullMsg}
-────────────────────────
-Fake Data · Simulation`;
+\`\`\`
+`;
 
-    sendToTelegram(bot, text).catch(()=>{ /* ignore errors in loop */ });
+    sendToTelegram(bot,text);
+    index=(index+1)%valid.length;
 
-    // Move to next bot (cycle back if at end)
-    currentBotIndex = (currentBotIndex + 1) % validBots.length;
-  }, delayMs);
+  },10000);
 }
 
 function stopAuto(){
-  const status = document.getElementById("status");
-  if (intervalId !== null) {
-    clearInterval(intervalId);
-    intervalId = null;
-    status.innerHTML = "<span style='color:#facc15;'>Auto OTP Stopped.</span>";
-  } else {
-    status.innerHTML = "<span style='color:#9ca3af;'>Already stopped.</span>";
-  }
+  clearInterval(intervalId);
+  intervalId=null;
+  document.getElementById("status").innerHTML="Stopped.";
 }
 
-// Load bots on page load
 loadBots();
 </script>
+
 </body>
 </html>
