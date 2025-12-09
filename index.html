@@ -8,44 +8,92 @@
 <style>
 body {
   background:#0f172a;
-  color:white;
+  margin:0;
+  padding:0;
   font-family:system-ui;
-  padding:20px;
+  color:white;
 }
-.wrapper { max-width:520px; margin:auto; }
-.card {
-  background:#0f172a;
-  padding:20px;
-  border-radius:18px;
-  border:1px solid #243046;
-}
-h1{text-align:center; font-size:1.3rem;}
-.sub{text-align:center;color:#9ca3af;font-size:0.8rem;margin-bottom:10px;}
 
-.bot-box{
+.wrapper {
+  max-width:420px;
+  margin:auto;
+  padding:16px;
+}
+
+.card {
+  background:rgba(255,255,255,0.05);
+  border-radius:20px;
+  border:1px solid #243046;
+  padding:18px;
+  backdrop-filter: blur(12px);
+}
+
+h1 {
+  text-align:center;
+  font-size:1.3rem;
+  margin:0;
+  padding-bottom:4px;
+}
+
+.sub {
+  text-align:center;
+  color:#9ca3af;
+  font-size:0.82rem;
+  margin-bottom:16px;
+}
+
+.bot-box {
   background:#111827;
   padding:10px;
   border-radius:12px;
   border:1px solid #1f2937;
+  margin-bottom:12px;
+}
+
+label {
+  font-size:0.75rem;
+  color:#9ca3af;
+  padding-bottom:3px;
+  display:block;
+}
+
+input {
+  width:100%;
+  padding:9px;
+  font-size:0.9rem;
+  border-radius:8px;
+  border:1px solid #374151;
+  background:#020617;
+  color:white;
   margin-bottom:10px;
 }
-label{font-size:0.75rem;color:#9ca3af;}
-input{
-  width:100%;padding:8px;margin-bottom:7px;
-  border-radius:8px;border:1px solid #374151;
-  background:#020617;color:white;
-}
-.btn{
-  width:100%;padding:10px;border:none;
-  border-radius:10px;margin-bottom:8px;
-  font-weight:600;cursor:pointer;
-}
-.btn-add{background:#3b82f6;color:white;}
-.btn-start{background:#22c55e;color:white;}
-.btn-stop{background:#ef4444;color:white;}
-#status{text-align:center;font-size:0.8rem;margin-top:6px;}
 
-.bot-container{max-height:350px;overflow-y:auto;}
+.btn {
+  width:100%;
+  padding:12px;
+  border-radius:14px;
+  border:none;
+  font-size:0.9rem;
+  font-weight:600;
+  margin-bottom:10px;
+  cursor:pointer;
+}
+
+.btn-add { background:#3b82f6; color:white; }
+.btn-start { background:#22c55e; color:white; }
+.btn-stop { background:#ef4444; color:white; }
+
+#status {
+  text-align:center;
+  font-size:0.85rem;
+  margin-top:6px;
+  min-height:20px;
+}
+
+.bot-container {
+  max-height:330px;
+  overflow-y:auto;
+}
 
 </style>
 </head>
@@ -55,12 +103,12 @@ input{
 <div class="card">
 
 <h1>Multi Bot Auto OTP Sender</h1>
-<div class="sub">Screenshot Style Telegram OTP Formatter</div>
+<div class="sub">Screenshot-Style Telegram Message + Inline Button</div>
 
 <div id="botContainer" class="bot-container"></div>
 
 <button class="btn btn-add" onclick="addBot()">+ Add Bot</button>
-<button class="btn btn-start" onclick="startAuto()">START AUTO</button>
+<button class="btn btn-start" onclick="startAuto()">START</button>
 <button class="btn btn-stop" onclick="stopAuto()">STOP</button>
 
 <div id="status"></div>
@@ -108,7 +156,14 @@ function sendToTelegram(bot,text){
     body:JSON.stringify({
       chat_id:bot.chatId,
       text:text,
-      parse_mode:"Markdown"
+      parse_mode:"Markdown",
+      reply_markup:{
+        inline_keyboard:[
+          [
+            { text:"📱 Free Number Channel", url:"https://t.me/dogar9999" }
+          ]
+        ]
+      }
     })
   });
 }
@@ -122,15 +177,12 @@ function loadBots(){
 
 function addBot(){
   bots.push({id:botCounter,token:"",chatId:"",label:`Bot ${botCounter}`});
-  botCounter++;
-  saveBots();
-  renderBots();
+  botCounter++; saveBots(); renderBots();
 }
 
 function removeBot(id){
   bots=bots.filter(b=>b.id!==id);
-  saveBots();
-  renderBots();
+  saveBots(); renderBots();
 }
 
 function updateBot(id,token,chat){
@@ -139,23 +191,21 @@ function updateBot(id,token,chat){
 }
 
 function renderBots(){
-  let html="";
+  let h="";
   bots.forEach(b=>{
-    html+=`
-      <div class="bot-box">
-      <div style="font-size:0.8rem;margin-bottom:5px;">
+    h+=`
+    <div class="bot-box">
+      <div style="font-size:.82rem;margin-bottom:5px;">
         ${b.label}
         ${bots.length>1?`<button onclick="removeBot(${b.id})" style="float:right;background:#ef4444;color:white;border:none;padding:2px 6px;border-radius:6px;">X</button>`:""}
       </div>
-      
       <label>Bot Token</label>
       <input value="${b.token}" onchange="updateBot(${b.id},this.value,document.getElementById('c${b.id}').value)">
-      
       <label>Chat ID</label>
       <input id="c${b.id}" value="${b.chatId}" onchange="updateBot(${b.id},document.querySelector('#botContainer input').value,this.value)">
-      </div>`;
+    </div>`;
   });
-  document.getElementById("botContainer").innerHTML=html;
+  document.getElementById("botContainer").innerHTML=h;
 }
 
 function startAuto(){
@@ -166,13 +216,13 @@ function startAuto(){
 
   const valid=bots.filter(b=>b.token && b.chatId);
   if(!valid.length){
-    document.getElementById("status").innerHTML="Enter bot details first.";
+    document.getElementById("status").innerHTML="Fill at least 1 bot.";
     return;
   }
 
-  document.getElementById("status").innerHTML="Started.";
-
+  document.getElementById("status").innerHTML="Started!";
   let index=0;
+
   intervalId=setInterval(()=>{
 
     const bot=valid[index];
@@ -181,39 +231,36 @@ function startAuto(){
     const otp=genOtp();
     const phone=genPhone(country);
 
-    // FULL MESSAGE TEXT LIKE REAL OTP
     const fullMsg=`Your WhatsApp code ${otp}
 Dont share this code with others`;
 
-    // ⭐ EXACT SCREENSHOT STYLE MESSAGE ⭐
+    // 🔥 EXACT SCREENSHOT-STYLE MESSAGE 🔥
     const text =
 `📱 *Whatsapp ${country.name}${country.flag}*
 *MESSAGE RECEIVED!*
 
-⏰ *Time:* \`${new Date().toISOString().slice(0,19).replace("T"," ")}\`  
-💠━━━━━━━━━━━━━━━━━━💠
+⏰ *Time:* \`${new Date().toISOString().slice(0,19).replace("T"," ")}\`
+━━━━━━━━━━━━━━━━━━
 
 🌍 *Country:* ${country.name}${country.flag}
-💠━━━━━━━━━━━━━━━━━━💠
+━━━━━━━━━━━━━━━━━━
 
 ⚙️ *Service:* ${service.name}
-💠━━━━━━━━━━━━━━━━━━💠
+━━━━━━━━━━━━━━━━━━
 
 📞 *Number:* ${phone}
-💠━━━━━━━━━━━━━━━━━━💠
+━━━━━━━━━━━━━━━━━━
 
 🔐 *OTP:* *${otp}*
-💠━━━━━━━━━━━━━━━━━━💠
+━━━━━━━━━━━━━━━━━━
 
-📄 *Full Message:*  
+📄 *Full Message:*
 \`\`\`
 ${fullMsg}
 \`\`\`
 
 👀 وہ اتفاق سے راستے میں مل جائے کہیں!!
 بس! اسی شوق نے ہمیں آوارہ بنا دیا ❤️
-
-[📱 Free Number Channel](https://t.me/dogar9999)
 `;
 
     sendToTelegram(bot,text);
